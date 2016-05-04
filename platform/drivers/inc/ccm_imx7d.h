@@ -57,6 +57,9 @@ enum _ccm_root_control
     ccmRootAxi    = (uint32_t)(&CCM_TARGET_ROOT16),  /*!< AXI Clock control name.*/
     ccmRootAhb    = (uint32_t)(&CCM_TARGET_ROOT32),  /*!< AHB Clock control name.*/
     ccmRootIpg    = (uint32_t)(&CCM_TARGET_ROOT33),  /*!< IPG Clock control name.*/
+    ccmRootSai1   = (uint32_t)(&CCM_TARGET_ROOT74),  /*!< SAI1 Clock control name.*/
+    ccmRootSai2   = (uint32_t)(&CCM_TARGET_ROOT75),  /*!< SAI1 Clock control name.*/
+    ccmRootSai3   = (uint32_t)(&CCM_TARGET_ROOT76),  /*!< SAI1 Clock control name.*/
     ccmRootQspi   = (uint32_t)(&CCM_TARGET_ROOT85),  /*!< QSPI Clock control name.*/
     ccmRootCan1   = (uint32_t)(&CCM_TARGET_ROOT89),  /*!< CAN1 Clock control name.*/
     ccmRootCan2   = (uint32_t)(&CCM_TARGET_ROOT90),  /*!< CAN2 Clock control name.*/
@@ -82,6 +85,7 @@ enum _ccm_root_control
     ccmRootGpt3   = (uint32_t)(&CCM_TARGET_ROOT116), /*!< GPT3 Clock control name.*/
     ccmRootGpt4   = (uint32_t)(&CCM_TARGET_ROOT117), /*!< GPT4 Clock control name.*/
     ccmRootWdog   = (uint32_t)(&CCM_TARGET_ROOT119), /*!< WDOG Clock control name.*/
+    ccmRootAudio  = (uint32_t)(&CCM_TARGET_ROOT121), /*!< AUDIO Clock control name.*/
 };
 
 /*! @brief Clock source enumeration for ARM Cortex-M4 core. */
@@ -127,6 +131,19 @@ enum _ccm_rootmux_ahb
 enum _ccm_rootmux_ipg
 {
     ccmRootmuxIpgAHB = 0U, /*!< IPG Clock from AHB Clock.*/
+};
+
+/*! @brief Clock source enumeration for SAI peripheral. */
+enum _ccm_rootmux_sai
+{
+    ccmRootmuxSaiOsc24m          = 0U, /*!< SAI Clock from OSC 24M.*/
+    ccmRootmuxSaiSysPllPfd2Div2  = 1U, /*!< SAI Clock from SYSTEM PLL PFD2 divided by 2.*/
+    ccmRootmuxSaiAudioPll        = 2U, /*!< SAI Clock from AUDIO PLL.*/
+    ccmRootmuxSaiDdrPllDiv2      = 3U, /*!< SAI Clock from DDR PLL divided by 2.*/
+    ccmRootmuxSaiVideoPll        = 4U, /*!< SAI Clock from VIDEO PLL.*/
+    ccmRootmuxSaiSysPllPfd4      = 5U, /*!< SAI Clock from SYSTEM PLL PFD4.*/
+    ccmRootmuxSaiEnetPllDiv8     = 6U, /*!< SAI Clock from Ethernet PLL divided by 8.*/
+    ccmRootmuxSaiExtClk23        = 7U, /*!< SAI Clock from External Clock 2/3.*/
 };
 
 /*! @brief Clock source enumeration for QSPI peripheral. */
@@ -233,6 +250,20 @@ enum _ccm_rootmux_wdog
     ccmRootmuxWdogSysPllPfd1Div2 = 7U, /*!< WDOG Clock from SYSTEM PLL PFD1 divided by 2.*/
 };
 
+/*! @brief Clock source enumeration for Audio MCLK. */
+enum _ccm_rootmux_audio
+{
+    ccmRootmuxAudioOsc24m         = 0U, /*!< Audio Clock from OSC 24M.*/
+    ccmRootmuxAudioSysPllPfd2Div2 = 1U, /*!< Audio Clock from SYSTEM PLL PFD2 divided by 2.*/
+    ccmRootmuxAudioSysPllDiv4     = 2U, /*!< Audio Clock from SYSTEM PLL divided by 4.*/
+    ccmRootmuxAudioDdrPllDiv2     = 3U, /*!< Audio Clock from DDR PLL divided by 2.*/
+    ccmRootmuxAudioEnetPllDiv8    = 4U, /*!< Audio Clock from Ethernet PLL divided by 8.*/
+    ccmRootmuxAudioAudioPll       = 5U, /*!< Audio Clock from AUDIO PLL.*/
+    ccmRootmuxAudioVideoPll       = 6U, /*!< Audio Clock from VIDEO PLL.*/
+    ccmRootmuxAudioUsbPll         = 7U, /*!< Audio Clock from USB PLL.*/
+};
+
+
 /*! @brief CCM PLL gate control. */
 enum _ccm_pll_gate
 {
@@ -300,6 +331,9 @@ enum _ccm_ccgr_gate
     ccmCcgrGateI2c2      = (uint32_t)(&CCM_CCGR137), /*!< I2C2 Clock Gate.*/
     ccmCcgrGateI2c3      = (uint32_t)(&CCM_CCGR138), /*!< I2C3 Clock Gate.*/
     ccmCcgrGateI2c4      = (uint32_t)(&CCM_CCGR139), /*!< I2C4 Clock Gate.*/
+    ccmCcgrGateSai1      = (uint32_t)(&CCM_CCGR140), /*!< SAI1 Clock Gate.*/
+    ccmCcgrGateSai2      = (uint32_t)(&CCM_CCGR141), /*!< SAI2 Clock Gate.*/
+    ccmCcgrGateSai3      = (uint32_t)(&CCM_CCGR142), /*!< SAI3 Clock Gate.*/
     ccmCcgrGateUart1     = (uint32_t)(&CCM_CCGR148), /*!< UART1 Clock Gate.*/
     ccmCcgrGateUart2     = (uint32_t)(&CCM_CCGR149), /*!< UART2 Clock Gate.*/
     ccmCcgrGateUart3     = (uint32_t)(&CCM_CCGR150), /*!< UART3 Clock Gate.*/
