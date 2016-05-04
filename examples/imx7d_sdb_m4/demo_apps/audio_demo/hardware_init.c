@@ -41,6 +41,8 @@ void hardware_init(void)
 
     /* initialize debug uart */
     dbg_uart_init();
+
+    configure_sai_pins((I2S_Type *)I2S1_BASE);
 }
 
 /*******************************************************************************
