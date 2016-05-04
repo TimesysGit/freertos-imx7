@@ -95,6 +95,8 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../main.c"
     "${ProjDirPath}/../../../../../platform/drivers/src/uart_imx.c"
     "${ProjDirPath}/../../../../../platform/drivers/inc/uart_imx.h"
+    "${ProjDirPath}/../../../../../platform/drivers/src/sai_imx7.c"
+    "${ProjDirPath}/../../../../../platform/drivers/inc/sai_imx7.h"
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/croutine.h"
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/event_groups.h"
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/FreeRTOS.h"
