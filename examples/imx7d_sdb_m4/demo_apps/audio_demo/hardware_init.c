@@ -42,6 +42,19 @@ void hardware_init(void)
     /* initialize debug uart */
     dbg_uart_init();
 
+    /* Take exclusive access of SAI */
+    RDC_SetPdapAccess(RDC, BOARD_SAI_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
+
+    /* Select SAI clock derived from OSC clock(24M) */
+    CCM_UpdateRoot(CCM, BOARD_SAI_CCM_ROOT, ccmRootmuxSaiOsc24m, 0, 0);
+    /* Enable SAI clock */
+    CCM_EnableRoot(CCM, BOARD_SAI_CCM_ROOT);
+    CCM_ControlGate(CCM, BOARD_SAI_CCM_CCGR, ccmClockNeededRunWait);
+
+    /* Enable Audio MCLK */
+    CCM_UpdateRoot(CCM, ccmRootAudio, ccmRootmuxAudioOsc24m, 0, 0);
+    CCM_EnableRoot(CCM, ccmRootAudio);
+
     configure_sai_pins((I2S_Type *)I2S1_BASE);
 }
 
