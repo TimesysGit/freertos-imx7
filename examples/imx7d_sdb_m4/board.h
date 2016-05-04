@@ -57,6 +57,11 @@
 #define BOARD_WDOG_IRQ_NUM                    WDOG3_IRQn
 #define BOARD_WDOG_HANDLER                    WDOG3_Handler
 
+/* SAI information for this board */
+#define BOARD_SAI_RDC_PDAP                    rdcPdapSai1
+#define BOARD_SAI_CCM_ROOT                    ccmRootSai1
+#define BOARD_SAI_CCM_CCGR                    ccmCcgrGateSai1
+
 /* SEMA4 information for this board */
 #define BOARD_SEMA4_RDC_PDAP                  rdcPdapSemaphoreHs
 #define BOARD_SEMA4_CCM_CCGR                  ccmCcgrGateSemaHs
