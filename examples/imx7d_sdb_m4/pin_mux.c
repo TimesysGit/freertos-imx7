@@ -192,6 +192,54 @@ void configure_uart_pins(UART_Type* base)
     }
 }
 
+void configure_sai_pins(I2S_Type* base)
+{
+    switch((uint32_t)base)
+    {
+        case I2S1_BASE:
+            // UART2 iomux configuration
+            IOMUXC_SW_MUX_CTL_PAD_SAI1_MCLK =    IOMUXC_SW_MUX_CTL_PAD_SAI1_MCLK_MUX_MODE(0);
+            IOMUXC_SW_MUX_CTL_PAD_ENET1_TX_CLK = IOMUXC_SW_MUX_CTL_PAD_ENET1_TX_CLK_MUX_MODE(2);
+            IOMUXC_SW_MUX_CTL_PAD_ENET1_COL =    IOMUXC_SW_MUX_CTL_PAD_ENET1_COL_MUX_MODE(2);
+            IOMUXC_SW_MUX_CTL_PAD_ENET1_RX_CLK = IOMUXC_SW_MUX_CTL_PAD_ENET1_RX_CLK_MUX_MODE(2);
+            IOMUXC_SW_MUX_CTL_PAD_ENET1_CRS =    IOMUXC_SW_MUX_CTL_PAD_ENET1_CRS_MUX_MODE(2);
+
+            IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK =    IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_PS(0)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_HYS_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_SRE_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_DSE(3);
+
+            IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK = IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_PS(0)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_HYS_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_SRE_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_DSE(3);
+
+            IOMUXC_SW_PAD_CTL_PAD_ENET1_COL =    IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_PE_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_PS(1)   |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_DSE(0);
+
+            IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK = IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_PS(0)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_HYS_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_SRE_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_DSE(3);
+
+            IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS =    IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_PS(0)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_HYS_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_SRE_MASK |
+                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_DSE(3);
+
+            IOMUXC_SAI1_RX_DATA_SELECT_INPUT = IOMUXC_SAI1_RX_DATA_SELECT_INPUT_DAISY_MASK;
+            IOMUXC_SAI1_TX_BCLK_SELECT_INPUT = IOMUXC_SAI1_TX_BCLK_SELECT_INPUT_DAISY_MASK;
+            IOMUXC_SAI1_TX_SYNC_SELECT_INPUT = IOMUXC_SAI1_TX_SYNC_SELECT_INPUT_DAISY_MASK;
+            break;
+        default:
+            break;
+    }
+}
 /*******************************************************************************
  * EOF
  ******************************************************************************/
