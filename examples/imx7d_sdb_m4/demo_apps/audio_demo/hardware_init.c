@@ -30,6 +30,7 @@
 
 #include "board.h"
 #include "pin_mux.h"
+#include "ccm_analog_imx7d.h"
 
 void hardware_init(void)
 {
@@ -42,14 +43,18 @@ void hardware_init(void)
     /* initialize debug uart */
     dbg_uart_init();
 
+    /* Take Audio PLL out of bypass */
+    CCM_ANALOG_EnableAudioPll(CCM_ANALOG, 36, 0, 0xd2f00, 0xf4240, 0);
+
     /* Take exclusive access of SAI */
     RDC_SetPdapAccess(RDC, BOARD_SAI_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
 
     /* Take exclusive access of I2C */
     RDC_SetPdapAccess(RDC, BOARD_I2C_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
 
-    /* Select SAI clock derived from OSC clock(24M) */
-    CCM_UpdateRoot(CCM, BOARD_SAI_CCM_ROOT, ccmRootmuxSaiOsc24m, 0, 0);
+    /* Select SAI clock derived from Audio Pll */
+    CCM_UpdateRoot(CCM, BOARD_SAI_CCM_ROOT, ccmRootmuxSaiAudioPll, 0, 23);
+
     /* Enable SAI clock */
     CCM_EnableRoot(CCM, BOARD_SAI_CCM_ROOT);
     CCM_ControlGate(CCM, BOARD_SAI_CCM_CCGR, ccmClockNeededRunWait);
@@ -61,7 +66,7 @@ void hardware_init(void)
     CCM_ControlGate(CCM, BOARD_I2C_CCM_CCGR, ccmClockNeededRunWait);
 
     /* Enable Audio MCLK */
-    CCM_UpdateRoot(CCM, ccmRootAudio, ccmRootmuxAudioOsc24m, 0, 0);
+    CCM_UpdateRoot(CCM, ccmRootAudio, ccmRootmuxAudioAudioPll, 7, 8);
     CCM_EnableRoot(CCM, ccmRootAudio);
 
     configure_sai_pins((I2S_Type *)I2S1_BASE);
