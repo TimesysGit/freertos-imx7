@@ -126,14 +126,14 @@ uint32_t CCM_ANALOG_GetEnetPllFreq(CCM_ANALOG_Type * base)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : CCM_ANALOG_GetAudioPllFreq
+ * Function Name : CCM_ANALOG_SetAudioPllFreq
  * Description   : Get Ethernet PLL frequency
  *
  *END**************************************************************************/
 uint32_t CCM_ANALOG_GetAudioPllFreq(CCM_ANALOG_Type * base)
 {
     uint8_t divSelect, divPostSelect, divTestSelect;
-    float factor;
+    float factor = 0;
 
     if (CCM_ANALOG_IsPllBypassed(base, ccmAnalogPllAudioControl))
         return 24000000ul;
@@ -173,16 +173,102 @@ uint32_t CCM_ANALOG_GetAudioPllFreq(CCM_ANALOG_Type * base)
     }
 
     if (CCM_ANALOG_PLL_AUDIO_SS_REG(base) & CCM_ANALOG_PLL_AUDIO_SS_ENABLE_MASK)
+        factor = ((float)(CCM_ANALOG_PLL_AUDIO_SS_REG(base) & CCM_ANALOG_PLL_AUDIO_SS_STEP_MASK)) *
+                 ((float)(CCM_ANALOG_PLL_AUDIO_NUM_REG(base) & CCM_ANALOG_PLL_AUDIO_NUM_A_MASK)) /
+                 ((float)(CCM_ANALOG_PLL_AUDIO_DENOM_REG(base) & CCM_ANALOG_PLL_AUDIO_DENOM_B_MASK));
+
+    else if (CCM_ANALOG_PLL_AUDIO_DENOM_REG(base))
+        factor = ((float)(CCM_ANALOG_PLL_AUDIO_NUM_REG(base) & CCM_ANALOG_PLL_AUDIO_NUM_A_MASK)) /
+                 ((float)(CCM_ANALOG_PLL_AUDIO_DENOM_REG(base) & CCM_ANALOG_PLL_AUDIO_DENOM_B_MASK));
+
+    return (uint32_t)(((24000000ul >> divTestSelect) >> divPostSelect) * (divSelect + factor));
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : CCM_ANALOG_EnableAudioPll
+ * Description   : Enable Audio PLL
+ *
+ *END**************************************************************************/
+void CCM_ANALOG_EnableAudioPll(CCM_ANALOG_Type * base,
+                                   uint8_t pllDiv,
+                                   uint16_t pllStep,
+                                   uint32_t pllNum,
+                                   uint32_t pllDenom,
+                                   uint8_t pllPostDiv)
+{
+    /* pllDiv must be between 27 and 54 */
+    if (pllDiv < 27)
+        pllDiv = 27;
+    else if (pllDiv > 54)
+        pllDiv = 54;
+
+    /* Disable PLL, power it up, and remove it from bypass */
+    CCM_ANALOG_DisablePllClock(CCM_ANALOG, ccmAnalogPllAudioClock);
+    CCM_ANALOG_PowerUpPll(CCM_ANALOG, ccmAnalogPllAudioControl);
+    CCM_ANALOG_SetPllBypass(CCM_ANALOG, ccmAnalogPllAudioControl, 0);
+
+    /* Clear dividers */
+    CCM_ANALOG_TUPLE_REG_CLR(CCM_ANALOG, ccmAnalogPllAudioDiv) =
+                               CCM_ANALOG_PLL_AUDIO_DIV_SELECT_MASK <<
+                               CCM_ANALOG_PLL_AUDIO_DIV_SELECT_SHIFT;
+
+    CCM_ANALOG_TUPLE_REG_CLR(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL_MASK <<
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL_SHIFT;
+
+    CCM_ANALOG_TUPLE_REG_CLR(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT_MASK <<
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT_SHIFT;
+
+
+    CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioDiv) =
+                               CCM_ANALOG_PLL_AUDIO_DIV_SELECT(pllDiv);
+
+    /* Set Post Div */
+    switch (pllPostDiv)
     {
-        factor = ((float)(CCM_ANALOG_PLL_AUDIO_SS_REG(base) & CCM_ANALOG_PLL_AUDIO_SS_STEP_MASK)) /
-                 ((float)(CCM_ANALOG_PLL_AUDIO_DENOM_REG(base) & CCM_ANALOG_PLL_AUDIO_DENOM_B_MASK)) *
-                 ((float)(CCM_ANALOG_PLL_AUDIO_NUM_REG(base) & CCM_ANALOG_PLL_AUDIO_NUM_A_MASK));
-        return (uint32_t)(((24000000ul >> divTestSelect) >> divPostSelect) * (divSelect + factor));
+        case 1:
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT(0x1);
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL(0x0);
+            break;
+        case 2:
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT(0x0);
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL(0x0);
+            break;
+        case 3:
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT(0x0);
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL(0x1);
+            break;
+        case 4:
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT(0x0);
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL(0x3);
+            break;
+        default:
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioTestDiv) =
+                               CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT(0x2);
+            CCM_ANALOG_TUPLE_REG_SET(CCM_ANALOG, ccmAnalogPllAudioPostDiv) =
+                               CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL(0x0);
+            break;
     }
-    else
-    {
-        return ((24000000ul >> divTestSelect) >> divPostSelect) * divSelect;
-    }
+
+    /* Set up the SS and Fractional Divider */
+    CCM_ANALOG_PLL_AUDIO_SS_REG(base) = CCM_ANALOG_PLL_AUDIO_SS_STEP(pllStep);
+    CCM_ANALOG_PLL_AUDIO_DENOM_REG(base) = CCM_ANALOG_PLL_AUDIO_DENOM_B(pllDenom);
+    CCM_ANALOG_PLL_AUDIO_NUM_REG(base) = CCM_ANALOG_PLL_AUDIO_NUM_A(pllNum);
+
+    while (CCM_ANALOG_IsPllLocked(CCM_ANALOG, ccmAnalogPllAudioControl)) {};
+
+    /* Enable the clock */
+    CCM_ANALOG_EnablePllClock(CCM_ANALOG, ccmAnalogPllAudioClock);
 }
 
 /*FUNCTION**********************************************************************

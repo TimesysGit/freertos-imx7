@@ -94,6 +94,20 @@ enum _ccm_analog_pll_clock
 };
 
 /*!
+ * @brief PLL div names for Audio clock div settings.
+ *
+ * These constants define the PLL div names for PLL clock div settings.\n
+ * - 0:15: REG offset to CCM_ANALOG_BASE in bytes.
+ * - 16:20: Clock div bit shift.
+ */
+enum _ccm_analog_pll_audio_div
+{
+    ccmAnalogPllAudioDiv     = CCM_ANALOG_TUPLE(PLL_AUDIO, CCM_ANALOG_PLL_AUDIO_DIV_SELECT_SHIFT),      /*!< CCM Analog AUDIO Div Select.*/
+    ccmAnalogPllAudioPostDiv = CCM_ANALOG_TUPLE(PLL_AUDIO, CCM_ANALOG_PLL_AUDIO_POST_DIV_SEL_SHIFT),      /*!< CCM Analog AUDIO Post Div Select.*/
+    ccmAnalogPllAudioTestDiv = CCM_ANALOG_TUPLE(PLL_AUDIO, CCM_ANALOG_PLL_AUDIO_TEST_DIV_SELECT_SHIFT),      /*!< CCM Analog AUDIO Test Div Select.*/
+};
+
+/*!
  * @brief PFD gate names for clock gate settings, clock source is system PLL(PLL_480)
  *
  * These constants define the PFD gate names for PFD clock enable/disable operations.\n
@@ -383,6 +397,23 @@ static inline uint32_t CCM_ANALOG_GetPfdFrac(CCM_ANALOG_Type * base, uint32_t pf
  * @return PFD clock frequency in HZ
  */
 uint32_t CCM_ANALOG_GetPfdFreq(CCM_ANALOG_Type * base, uint32_t pfdFrac);
+
+/*!
+ * @brief Enable Audio PLL
+ *
+ * @param base CCM_ANALOG base pointer.
+ * @param pllDiv PLL Loop divider (27-54)
+ * @param pllStep Spread Spectrum max frequency change
+ * @param pllNum Numerator of Audio PLL fractional loop divider.
+ * @param pllDenom Denominator of Audio PLL fractional loop divider.
+ * @param pllPostDiv Post Divider Value
+ */
+void CCM_ANALOG_EnableAudioPll(CCM_ANALOG_Type * base,
+                                   uint8_t pllDiv,
+                                   uint16_t pllStep,
+                                   uint32_t pllNum,
+                                   uint32_t pllDenom,
+                                   uint8_t pllPostDiv);
 
 /*@}*/
 
