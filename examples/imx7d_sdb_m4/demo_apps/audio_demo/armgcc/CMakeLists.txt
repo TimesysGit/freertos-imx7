@@ -68,6 +68,7 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/utilities/inc)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../drivers/)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
     INCLUDE_DIRECTORIES(${ProjDirPath}/..)
 ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
@@ -81,6 +82,7 @@ ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/utilities/inc)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../drivers/)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
     INCLUDE_DIRECTORIES(${ProjDirPath}/..)
 ENDIF()
@@ -93,6 +95,8 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/portable/MemMang/heap_2.c"
     "${ProjDirPath}/../FreeRTOSConfig.h"
     "${ProjDirPath}/../main.c"
+    "${ProjDirPath}/../../../../../platform/drivers/src/i2c_imx.c"
+    "${ProjDirPath}/../../../../../platform/drivers/inc/i2c_imx.h"
     "${ProjDirPath}/../../../../../platform/drivers/src/uart_imx.c"
     "${ProjDirPath}/../../../../../platform/drivers/inc/uart_imx.h"
     "${ProjDirPath}/../../../../../platform/drivers/src/sai_imx7.c"
@@ -139,6 +143,8 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../../../clock_freq.c"
     "${ProjDirPath}/../../../clock_freq.h"
     "${ProjDirPath}/../hardware_init.c"
+    "${ProjDirPath}/../drivers/wm8960.c"
+    "${ProjDirPath}/../drivers/wm8960.h"
 )
 SET_TARGET_PROPERTIES(audio_demo PROPERTIES OUTPUT_NAME "audio_demo.elf")
 
