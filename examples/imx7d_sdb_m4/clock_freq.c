@@ -247,6 +247,63 @@ uint32_t get_uart_clock_freq(UART_Type* base)
     return hz / (pre + 1) / (post + 1);
 }
 
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : get_sai_clock_freq
+ * Description   : Get clock frequency applies to the SAI module
+ *
+ *END**************************************************************************/
+uint32_t get_sai_clock_freq(I2S_Type* base)
+{
+    uint32_t root;
+    uint32_t hz;
+    uint32_t pre, post;
+
+    switch((uint32_t)base)
+    {
+        case I2S1_BASE:
+            root = CCM_GetRootMux(CCM, ccmRootSai1);
+            CCM_GetRootDivider(CCM, ccmRootSai1, &pre, &post);
+            break;
+        case I2S2_BASE:
+            root = CCM_GetRootMux(CCM, ccmRootSai2);
+            CCM_GetRootDivider(CCM, ccmRootSai2, &pre, &post);
+        case I2S3_BASE:
+            root = CCM_GetRootMux(CCM, ccmRootSai3);
+            CCM_GetRootDivider(CCM, ccmRootSai3, &pre, &post);
+        default:
+            return 0;
+    }
+
+    switch(root)
+    {
+        case ccmRootmuxSaiOsc24m:
+            hz = 24000000;
+            break;
+        case ccmRootmuxSaiSysPllPfd2Div2:
+            hz = CCM_ANALOG_GetPfdFreq(CCM_ANALOG, ccmAnalogPfd2Frac) >> 1;
+            break;
+        case ccmRootmuxSaiAudioPll:
+            hz = CCM_ANALOG_GetAudioPllFreq(CCM_ANALOG);
+            break;
+        case ccmRootmuxSaiDdrPllDiv2:
+            hz = CCM_ANALOG_GetDdrPllFreq(CCM_ANALOG) >> 1;
+            break;
+        case ccmRootmuxSaiVideoPll:
+            hz = CCM_ANALOG_GetVideoPllFreq(CCM_ANALOG);
+            break;
+        case ccmRootmuxSaiSysPllPfd4:
+            hz = CCM_ANALOG_GetPfdFreq(CCM_ANALOG, ccmAnalogPfd4Frac);
+            break;
+        case ccmRootmuxSaiEnetPllDiv8:
+            hz = CCM_ANALOG_GetEnetPllFreq(CCM_ANALOG) >> 3;
+            break;
+        default:
+            return 0;
+    }
+
+    return hz / (pre + 1) / (post + 1);
+}
 /*******************************************************************************
  * EOF
  ******************************************************************************/
