@@ -45,17 +45,27 @@ void hardware_init(void)
     /* Take exclusive access of SAI */
     RDC_SetPdapAccess(RDC, BOARD_SAI_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
 
+    /* Take exclusive access of I2C */
+    RDC_SetPdapAccess(RDC, BOARD_I2C_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
+
     /* Select SAI clock derived from OSC clock(24M) */
     CCM_UpdateRoot(CCM, BOARD_SAI_CCM_ROOT, ccmRootmuxSaiOsc24m, 0, 0);
     /* Enable SAI clock */
     CCM_EnableRoot(CCM, BOARD_SAI_CCM_ROOT);
     CCM_ControlGate(CCM, BOARD_SAI_CCM_CCGR, ccmClockNeededRunWait);
 
+    /* Select I2C clock derived from OSC clock(24M) */
+    CCM_UpdateRoot(CCM, BOARD_I2C_CCM_ROOT, ccmRootmuxI2cOsc24m, 0, 0);
+    /* Enable I2C clock */
+    CCM_EnableRoot(CCM, BOARD_I2C_CCM_ROOT);
+    CCM_ControlGate(CCM, BOARD_I2C_CCM_CCGR, ccmClockNeededRunWait);
+
     /* Enable Audio MCLK */
     CCM_UpdateRoot(CCM, ccmRootAudio, ccmRootmuxAudioOsc24m, 0, 0);
     CCM_EnableRoot(CCM, ccmRootAudio);
 
     configure_sai_pins((I2S_Type *)I2S1_BASE);
+    configure_i2c_pins(BOARD_I2C_BASEADDR);
 }
 
 /*******************************************************************************
