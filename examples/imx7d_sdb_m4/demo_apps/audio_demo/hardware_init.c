@@ -31,6 +31,7 @@
 #include "board.h"
 #include "pin_mux.h"
 #include "ccm_analog_imx7d.h"
+#include "wm8960.h"
 
 void hardware_init(void)
 {
@@ -71,6 +72,8 @@ void hardware_init(void)
 
     configure_sai_pins((I2S_Type *)I2S1_BASE);
     configure_i2c_pins(BOARD_I2C_BASEADDR);
+
+    wm8960_init();
 }
 
 /*******************************************************************************
