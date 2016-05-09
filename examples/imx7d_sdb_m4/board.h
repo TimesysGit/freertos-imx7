@@ -121,6 +121,11 @@
 #define BOARD_I2C_HANDLER                     I2C4_Handler
 #define BOARD_I2C_WM8960_ADDR                 (0x1A)
 
+/* I2S information for this board */
+#define BOARD_I2S_BASEADDR                    I2S1
+#define BOARD_I2S_IRQ_NUM                     SAI1_IRQn
+#define BOARD_I2S_HANDLER                     SAI1_Handler
+
 /* FlexCAN information for this board */
 #define BOARD_FLEXCAN_RDC_PDAP                rdcPdapFlexCan2
 #define BOARD_FLEXCAN_CCM_ROOT                ccmRootCan2
