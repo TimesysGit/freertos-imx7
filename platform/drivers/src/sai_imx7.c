@@ -77,7 +77,7 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
 
     /* Set up the BCLK */
     I2S_TCR2_REG(base) = I2S_TCR2_SYNC(0) |  /* Asynchronous mode */
-                         I2S_TCR2_MSEL(1) |  /* MCLK 1 option */
+                         I2S_TCR2_MSEL(0) |  /* MCLK 0 option */
                          I2S_TCR2_BCP_MASK | /* Sample inputs on rising edge */
                          I2S_TCR2_BCD_MASK | /* Bit clock generated internally */
                          I2S_TCR2_DIV(1);    /* Divide by 4 (MCLK / ((DIV + 1) * 2)) */
@@ -96,16 +96,16 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
                          I2S_TCR4_FSP_MASK |  /* Frame sync active low */
                          I2S_TCR4_FSD_MASK;   /* Frame sync master */
 
-    /* Configure for 24 bit words */
-    I2S_TCR5_REG(base) = I2S_TCR5_WNW(23) |   /* Subsequent words are 24 bits */
-                         I2S_TCR5_W0W(23) |   /* First word is 24 bits */
+    /* Configure for 32 bit words */
+    I2S_TCR5_REG(base) = I2S_TCR5_WNW(31) |   /* Subsequent words are 32 bits */
+                         I2S_TCR5_W0W(31) |   /* First word is 32 bits */
                          I2S_TCR5_FBT(31);    /* Bits are left justified in I2S */
 
     I2S_RCR1_REG(base) = I2S_RCR1_RFW(1);    /* Generate interrupt after 2nd word received */
 
     /* Set up the bit clock */
     I2S_RCR2_REG(base) = I2S_RCR2_SYNC(1) |  /* Synchronous with Transmitter */
-                         I2S_RCR2_MSEL(1) |  /* MCLK 1 option */
+                         I2S_RCR2_MSEL(0) |  /* MCLK 0 option */
                          I2S_RCR2_BCP_MASK | /* Sample inputs on rising edge */
                          I2S_RCR2_BCD_MASK | /* Bit clock generated internally */
                          I2S_RCR2_DIV(1);    /* Divide by 4 (MCLK / ((DIV + 1) * 2)) */
@@ -125,9 +125,9 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
                          I2S_RCR4_FSP_MASK |  /* Frame sync active low */
                          I2S_RCR4_FSD_MASK;   /* Frame sync master */
 
-    /* Configure for 24 bit words */
-    I2S_RCR5_REG(base) = I2S_RCR5_WNW(23) |   /* Subsequent words are 24 bits */
-                         I2S_RCR5_W0W(23) |   /* First word is 24 bits */
+    /* Configure for 32 bit words */
+    I2S_RCR5_REG(base) = I2S_RCR5_WNW(31) |   /* Subsequent words are 32 bits */
+                         I2S_RCR5_W0W(31) |   /* First word is 32 bits */
                          I2S_RCR5_FBT(31);    /* Bits are left justified in I2S */
 
 }
