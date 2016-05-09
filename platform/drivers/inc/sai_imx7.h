@@ -88,6 +88,12 @@ void SAI_Deinit(I2S_Type* base);
  */
 static inline void SAI_Enable(I2S_Type* base)
 {
+    /* Enable the Receiver and FIFO interrupt */
+    I2S_RCSR_REG(base) |= I2S_RCSR_RE_MASK |  /* Enable the receiver */
+                          I2S_RCSR_FRIE_MASK; /* Generate interrupt on FIFO request */
+
+    /* Enable the Transmitter */
+    I2S_TCSR_REG(base) |= I2S_TCSR_TE_MASK;   /* Enable the transmitter */
 }
 
 /*!
@@ -97,8 +103,34 @@ static inline void SAI_Enable(I2S_Type* base)
  */
 static inline void SAI_Disable(I2S_Type* base)
 {
+    /* Disable the Transmitter */
+    I2S_RCSR_REG(base) &= ~I2S_TCSR_TE_MASK;
+
+    /* Disable the Receiver and FIFO interrupt */
+    I2S_RCSR_REG(base) &= ~(I2S_RCSR_RE_MASK &
+                            I2S_RCSR_FRIE_MASK);
 }
 
+static inline uint8_t SAI_CheckIRQ(I2S_Type *base)
+{
+    return !!(I2S_RCSR_REG(base) & I2S_RCSR_FRF_MASK);
+}
+
+static inline void SAI_ClearIRQ(I2S_Type *base)
+{
+    I2S_RCSR_REG(base) &= ~(I2S_RCSR_WSF_MASK);
+    I2S_TCSR_REG(base) &= ~(I2S_TCSR_WSF_MASK | I2S_TCSR_SEF_MASK | I2S_TCSR_FEF_MASK);
+}
+
+static inline uint32_t SAI_RxData(I2S_Type *base)
+{
+    return I2S_RDR_REG(base, 0);
+}
+
+static inline void SAI_TxData(I2S_Type *base, uint32_t data)
+{
+    I2S_TDR_REG(base, 0) = data;
+}
 
 #ifdef __cplusplus
 }

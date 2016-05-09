@@ -130,12 +130,6 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
                          I2S_RCR5_W0W(23) |   /* First word is 24 bits */
                          I2S_RCR5_FBT(31);    /* Bits are left justified in I2S */
 
-    /* Enable the Receiver and FIFO interrupt */
-    I2S_RCSR_REG(base) |= I2S_RCSR_RE_MASK |  /* Enable the receiver */
-                          I2S_RCSR_FRIE_MASK; /* Generate interrupt on FIFO request */
-
-    /* Enable the Transmitter */
-    I2S_TCSR_REG(base) |= I2S_TCSR_TE_MASK;   /* Enable the transmitter */
 }
 
 /*FUNCTION**********************************************************************
@@ -147,10 +141,4 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
  *END**************************************************************************/
 void SAI_Deinit(I2S_Type* base)
 {
-    /* Disable the Transmitter */
-    I2S_RCSR_REG(base) &= ~I2S_TCSR_TE_MASK;
-
-    /* Disable the Receiver and FIFO interrupt */
-    I2S_RCSR_REG(base) &= ~(I2S_RCSR_RE_MASK &
-                            I2S_RCSR_FRIE_MASK);
 }
