@@ -120,6 +120,7 @@ static bool I2C_XFER_IsBusy(void);
 
 void wm8960_init(void)
 {
+    uint32_t delay;
     /* Setup I2C init structure. */
     i2c_init_config_t i2cInitConfig = {
         .baudRate     = 100000u,
@@ -134,7 +135,63 @@ void wm8960_init(void)
     /* Finally, enable the I2C module */
     I2C_Enable(BOARD_I2C_BASEADDR);
 
-    /* TODO: Add desired initialization here */
+    /* Enable Vmid and Vref voltages */
+    wm8960_update_blocking(0x19, 0x180, 0x080); //Vmid 2x50k divider
+    /* Wait 100ms for stable Vmid. TODO: The cycle number should be changed
+     * according to M4 Core clock frequncy.
+     */
+    for (delay = 0 ; delay < 1000000; delay++)
+    {
+        __NOP();
+    }
+
+    wm8960_update_blocking(0x19, 0x40, 0x40); //VREF enable
+    for (delay = 0 ; delay < 100000; delay++)
+    {
+        __NOP();
+    }
+
+    /* Enable left microphone path */
+    wm8960_update_blocking(0x19, 0x20, 0x20); //AINL = 1
+    wm8960_update_blocking(0x2F, 0x20, 0x20); //LMIC =1
+    wm8960_update_blocking(0x00, 0x100, 0x100); //IPVU = 1
+    wm8960_update_blocking(0x00, 0x80, 0x00); //LINMUTE = 0
+    wm8960_update_blocking(0x20, 0x8, 0x8); //LMIC2B = 1
+    //wm8960_update_blocking(0x20, 0x30, 0x30); //LMICBOOST[1:0] = +29dB
+    //wm8960_update_blocking(0x00, 0x3F, 0x3F); //LINVOL[5:0]  = +30dB
+
+    /* Left output setup */
+    wm8960_update_blocking(0x2F, 0x8, 0x8); //LOMIX = 1
+    wm8960_update_blocking(0x02, 0x100, 0x100); //Left OUT1VU = 1
+    wm8960_update_blocking(0x02, 0x7F, 0x79); //LOUT1VOL[6:0] = 0dB
+    wm8960_update_blocking(0x1A, 0x40, 0x40); //LOUT1 = 1
+
+    /* Right output setup */
+    wm8960_update_blocking(0x2F, 0x4, 0x4); //ROMIX = 1
+    wm8960_update_blocking(0x03, 0x100, 0x100); //Right OUT1VU = 1
+    wm8960_update_blocking(0x03, 0x7F, 0x79); //ROUT1VOL[6:0] = 0dB
+    wm8960_update_blocking(0x1A, 0x20, 0x20); //ROUT1 = 1
+
+#define MIC_BYPASS_TO_MIXER
+#ifdef MIC_BYPASS_TO_MIXER
+    /* Test code to bypass ADC/DAC and connect mic to output mixer */
+    wm8960_update_blocking(0x2D, 0x80, 0x80); //LB2LO = 1
+    wm8960_update_blocking(0x2D, 0x70, 0x00); //LB2LOVOL[2:0] = 0dB
+#else
+    /* ADC setup */
+    wm8960_update_blocking(0x19, 0xC, 0xC); //ADCL = 1, ADCR = 1
+    wm8960_update_blocking(0x17, 0xC, 0x4); //DATSEL[1:0] left, right data = left ADC
+    wm8960_update_blocking(0x15, 0x100, 0x100); //Left ADCVU = 1
+    wm8960_update_blocking(0x16, 0x100, 0x100); //Right ADCVU = 1
+    /* DAC setup */
+    wm8960_update_blocking(0x1A, 0x180, 0x180); //DACL = 1, DACR = 1
+    wm8960_update_blocking(0x0A, 0x100, 0x100); //Left DACVU = 1
+    wm8960_update_blocking(0x0B, 0x100, 0x100); //Right DACVU = 1
+    wm8960_update_blocking(0x05, 0x8, 0x8); //DACMU = 1
+    /* Output mixer source */
+    wm8960_update_blocking(0x22, 0x100, 0x100); //LD2LO = 1
+    wm8960_update_blocking(0x25, 0x100, 0x100); //RD2RO = 1
+#endif
 
     PRINTF("WM8960 codec initialized\n\r");
 }
@@ -154,6 +211,7 @@ static bool wm8960_write(uint8_t addr, uint16_t data, bool blocking)
         if (blocking)
             while(I2C_XFER_IsBusy());
         wm8960_reg_cache[addr] = data;
+        PRINTF("WM8960 codec: Set register 0x%02x to 0x%04x\n\r",addr, data);
         return true;
     } else {
         return false;
