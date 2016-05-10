@@ -31,7 +31,7 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -T${ProjDi
 SET(CMAKE_ASM_FLAGS_DEBUG "${CMAKE_ASM_FLAGS_DEBUG} -g  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
 
 # DEBUG C FLAGS
-SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g  -O0  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
+SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g  -O0  -fno-strict-aliasing  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
 
 # DEBUG LD FLAGS
 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs")
@@ -40,7 +40,7 @@ SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g  -mcpu=cort
 SET(CMAKE_ASM_FLAGS_RELEASE "${CMAKE_ASM_FLAGS_RELEASE} -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
 
 # RELEASE C FLAGS
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
+SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -fno-strict-aliasing  -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -mapcs  -std=gnu99")
 
 # RELEASE LD FLAGS
 SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -mcpu=cortex-m4  -mfloat-abi=hard  -mfpu=fpv4-sp-d16  --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs")
@@ -68,6 +68,11 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/utilities/inc)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp)
+    INCLUDE_DIRECTORIES(${ProjDirPath})
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/env/freertos)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../drivers/)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
     INCLUDE_DIRECTORIES(${ProjDirPath}/..)
@@ -82,6 +87,11 @@ ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../platform/utilities/inc)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp)
+    INCLUDE_DIRECTORIES(${ProjDirPath})
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/env/freertos)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../drivers/)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../..)
     INCLUDE_DIRECTORIES(${ProjDirPath}/..)
@@ -95,6 +105,21 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/portable/MemMang/heap_2.c"
     "${ProjDirPath}/../FreeRTOSConfig.h"
     "${ProjDirPath}/../main.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_rtos.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4/platform.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4/rpmsg_platform_porting.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_ext.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/hil/hil.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/llist/llist.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/shm/sh_mem.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/config/config.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/env/env.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_core.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/virtio/virtio.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/virtio/virtio_ring.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/virtio/virtqueue.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/env/freertos/rpmsg_porting.h"
     "${ProjDirPath}/../../../../../platform/drivers/src/i2c_imx.c"
     "${ProjDirPath}/../../../../../platform/drivers/inc/i2c_imx.h"
     "${ProjDirPath}/../../../../../platform/drivers/src/uart_imx.c"
@@ -113,6 +138,20 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/StackMacros.h"
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/task.h"
     "${ProjDirPath}/../../../../../rtos/FreeRTOS/Source/include/timers.h"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_rtos.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4/platform.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/imx7d_m4/platform_info.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/hil/hil.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/llist/llist.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/common/shm/sh_mem.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/config/config.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/remote_device.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_ext.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/rpmsg/rpmsg_core.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/virtio/virtio.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/virtio/virtqueue.c"
+    "${ProjDirPath}/../../../../../middleware/multicore/open-amp/porting/env/freertos/rpmsg_porting.c"
     "${ProjDirPath}/../../../../../platform/drivers/inc/ccm_analog_imx7d.h"
     "${ProjDirPath}/../../../../../platform/drivers/inc/ccm_imx7d.h"
     "${ProjDirPath}/../../../../../platform/drivers/inc/lmem.h"
@@ -130,6 +169,8 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../../../../../platform/drivers/src/lmem.c"
     "${ProjDirPath}/../../../../../platform/drivers/src/rdc.c"
     "${ProjDirPath}/../../../../../platform/drivers/src/wdog_imx.c"
+    "${ProjDirPath}/../../../../../platform/drivers/src/mu_imx.c"
+    "${ProjDirPath}/../../../../../platform/drivers/inc/mu_imx.h"
     "${ProjDirPath}/../../../../../platform/utilities/src/debug_console_imx.c"
     "${ProjDirPath}/../../../../../platform/utilities/inc/debug_console_imx.h"
     "${ProjDirPath}/../../../../../platform/utilities/src/print_scan.c"

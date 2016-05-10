@@ -31,34 +31,100 @@
 ///////////////////////////////////////////////////////////////////////////////
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
+#include "rpmsg/rpmsg_rtos.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
+#include "string.h"
 #include "board.h"
+#include "mu_imx.h"
 #include "debug_console_imx.h"
 #include "audio.h"
+////////////////////////////////////////////////////////////////////////////////
+// Definitions
+////////////////////////////////////////////////////////////////////////////////
+#define APP_TASK_STACK_SIZE 256
+
+/*
+ * APP decided interrupt priority
+ */
+#define APP_MU_IRQ_PRIORITY 3
+
+/* Globals */
+static char app_buf[512]; /* Each RPMSG buffer can carry less than 512 payload */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @brief Task for updating UI values
+ * @brief A basic RPMSG task
  */
-void UITask(void *pvParameters)
+static void AudioCtrlTask(void *pvParameters)
 {
+    int result;
+    struct remote_device *rdev = NULL;
+    struct rpmsg_channel *app_chnl = NULL;
+    void *rx_buf;
+    int len;
+    unsigned long src;
+    void *tx_buf;
+    unsigned long size;
+
+    /* Print the initial banner */
     PRINTF("\r\nTimesys AMP Audio Demo for i.MX7\n\n\r");
     PRINTF("SAI Clk = %d Hz\n\r", get_sai_clock_freq(BOARD_I2S_BASEADDR));
 
-    while(1)
-    {
-        // Main routine that simply echoes received characters forever
+    /* RPMSG Init as REMOTE */
+    PRINTF("RPMSG Init as Remote\r\n");
+    result = rpmsg_rtos_init(0 /*REMOTE_CPU_ID*/, &rdev, RPMSG_MASTER, &app_chnl);
+    assert(result == 0);
 
-#ifdef __DEBUG
-        /* Wait for a character */
-        GETCHAR();
-	audio_dump_reg();
-#endif
+    PRINTF("Name service handshake is done, M4 has setup a rpmsg channel [%d ---> %d]\r\n", app_chnl->src, app_chnl->dst);
+
+    /*
+     * str_echo demo loop
+     */
+    for (;;)
+    {
+        /* Get RPMsg rx buffer with message */
+        result = rpmsg_rtos_recv_nocopy(app_chnl->rp_ept, &rx_buf, &len, &src, 0xFFFFFFFF);
+        assert(result == 0);
+
+        /* Copy string from RPMsg rx buffer */
+        assert(len < sizeof(app_buf));
+        memcpy(app_buf, rx_buf, len);
+        app_buf[len] = 0; /* End string by '\0' */
+
+        if ((len == 2) && (app_buf[0] == 0xd) && (app_buf[1] == 0xa))
+            PRINTF("Get New Line From Master Side\r\n");
+        else
+            PRINTF("Get Message From Master Side : \"%s\" [len : %d]\r\n", app_buf, len);
+
+        /* Get tx buffer from RPMsg */
+        tx_buf = rpmsg_rtos_alloc_tx_buffer(app_chnl->rp_ept, &size);
+        assert(tx_buf);
+        /* Copy string to RPMsg tx buffer */
+        memcpy(tx_buf, app_buf, len);
+        /* Echo back received message with nocopy send */
+        result = rpmsg_rtos_send_nocopy(app_chnl->rp_ept, tx_buf, len, src);
+        assert(result == 0);
+
+        /* Release held RPMsg rx buffer */
+        result = rpmsg_rtos_recv_nocopy_free(app_chnl->rp_ept, rx_buf);
+        assert(result == 0);
     }
+}
+
+/*
+ * MU Interrrupt ISR
+ */
+void BOARD_MU_HANDLER(void)
+{
+    /*
+     * calls into rpmsg_handler provided by middleware
+     */
+    rpmsg_handler();
 }
 
 /*!
@@ -69,8 +135,16 @@ int main(void)
     // Initialize demo application pins setting and clock setting.
     hardware_init();
 
-    // Create a task which handles user interface updates
-    xTaskCreate(UITask, "UI Task", configMINIMAL_STACK_SIZE,
+    /*
+     * Prepare for the MU Interrupt
+     *  MU must be initialized before rpmsg init is called
+     */
+    MU_Init(BOARD_MU_BASE_ADDR);
+    NVIC_SetPriority(BOARD_MU_IRQ_NUM, APP_MU_IRQ_PRIORITY);
+    NVIC_EnableIRQ(BOARD_MU_IRQ_NUM);
+
+    /* Create a demo task. */
+    xTaskCreate(AudioCtrlTask, "Audio Effects Control Task", APP_TASK_STACK_SIZE,
                 NULL, tskIDLE_PRIORITY+1, NULL);
 
     // Start FreeRTOS scheduler.

@@ -102,7 +102,7 @@
 #define configUSE_RECURSIVE_MUTEXES       0
 #define configUSE_MALLOC_FAILED_HOOK      0
 #define configUSE_APPLICATION_TASK_TAG    0
-#define configUSE_COUNTING_SEMAPHORES     0
+#define configUSE_COUNTING_SEMAPHORES     1
 #define configGENERATE_RUN_TIME_STATS     0
 
 /* Co-routine definitions. */
@@ -123,7 +123,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskCleanUpResources     0
 #define INCLUDE_vTaskSuspend              1
 #define INCLUDE_vTaskDelayUntil           0
-#define INCLUDE_vTaskDelay                0
+#define INCLUDE_vTaskDelay                1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS

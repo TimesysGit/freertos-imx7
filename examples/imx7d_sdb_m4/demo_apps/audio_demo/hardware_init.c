@@ -54,6 +54,9 @@ void hardware_init(void)
     /* Take exclusive access of I2C */
     RDC_SetPdapAccess(RDC, BOARD_I2C_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
 
+    /* RDC MU*/
+    RDC_SetPdapAccess(RDC, BOARD_MU_RDC_PDAP, 3 << (BOARD_DOMAIN_ID * 2), false, false);
+
     /* Select SAI clock derived from Audio Pll */
     CCM_UpdateRoot(CCM, BOARD_SAI_CCM_ROOT, ccmRootmuxSaiAudioPll, 0, 23);
 
@@ -70,6 +73,9 @@ void hardware_init(void)
     /* Enable Audio MCLK */
     CCM_UpdateRoot(CCM, ccmRootAudio, ccmRootmuxAudioAudioPll, 7, 8);
     CCM_EnableRoot(CCM, ccmRootAudio);
+
+    /* Enable clock gate for MU*/
+    CCM_ControlGate(CCM, BOARD_MU_CCM_CCGR, ccmClockNeededRun);
 
     configure_sai_pins((I2S_Type *)I2S1_BASE);
     configure_i2c_pins(BOARD_I2C_BASEADDR);
