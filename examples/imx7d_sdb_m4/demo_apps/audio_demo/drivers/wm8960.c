@@ -158,17 +158,17 @@ void wm8960_init(void)
     /* Enable left microphone path */
     wm8960_update_blocking(0x19, 0x20, 0x20); //AINL = 1
     wm8960_update_blocking(0x2F, 0x20, 0x20); //LMIC =1
-    wm8960_update_blocking(0x00, 0x100, 0x100); //IPVU = 1
     wm8960_update_blocking(0x00, 0x80, 0x00); //LINMUTE = 0
     wm8960_update_blocking(0x20, 0x8, 0x8); //LMIC2B = 1
     //wm8960_update_blocking(0x20, 0x30, 0x30); //LMICBOOST[1:0] = +29dB
     //wm8960_update_blocking(0x00, 0x3F, 0x3F); //LINVOL[5:0]  = +30dB
+    wm8960_update_blocking(0x00, 0x100, 0x100); //IPVU = 1
 
     /* Left output setup */
     wm8960_update_blocking(0x2F, 0x8, 0x8); //LOMIX = 1
-    wm8960_update_blocking(0x02, 0x100, 0x100); //Left OUT1VU = 1
     wm8960_update_blocking(0x02, 0x7F, 0x79); //LOUT1VOL[6:0] = 0dB
     wm8960_update_blocking(0x1A, 0x40, 0x40); //LOUT1 = 1
+    wm8960_update_blocking(0x02, 0x100, 0x100); //Left OUT1VU = 1
 
     /* Right output setup */
     wm8960_update_blocking(0x2F, 0x4, 0x4); //ROMIX = 1
