@@ -195,7 +195,7 @@ void wm8960_init(void)
     wm8960_update_blocking(0x0B, 0xFF, 0xFF); //Right DAC Volume = 0db
     wm8960_update_blocking(0x0A, 0x100, 0x100); //Left DACVU = 1
     wm8960_update_blocking(0x0B, 0x100, 0x100); //Right DACVU = 1
-    wm8960_update_blocking(0x05, 0x8, 0x8); //DACMU = 1
+    wm8960_update_blocking(0x05, 0x8, 0x0); //DACMU = 0
     /* Output mixer source */
     wm8960_update_blocking(0x22, 0x100, 0x100); //LD2LO = 1
     wm8960_update_blocking(0x25, 0x100, 0x100); //RD2RO = 1
