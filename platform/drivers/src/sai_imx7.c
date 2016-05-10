@@ -94,7 +94,6 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
                          I2S_TCR4_SYWD(31) |  /* 32 BCLKs per word */
                          I2S_TCR4_MF_MASK |   /* MSB First */
                          I2S_TCR4_FSE_MASK |  /* 1 BCLK delay for first word */
-                         I2S_TCR4_FSP_MASK |  /* Frame sync active low */
                          I2S_TCR4_FSD_MASK;   /* Frame sync master */
 
     /* Configure for 32 bit words */
@@ -123,7 +122,6 @@ void SAI_Init(I2S_Type* base, sai_init_config_t* initConfig)
                          I2S_RCR4_SYWD(31) |  /* 32 BCLKs per word */
                          I2S_RCR4_MF_MASK |   /* MSB First */
                          I2S_RCR4_FSE_MASK |  /* 1 BCLK delay for first word */
-                         I2S_RCR4_FSP_MASK |  /* Frame sync active low */
                          I2S_RCR4_FSD_MASK;   /* Frame sync master */
 
     /* Configure for 32 bit words */
