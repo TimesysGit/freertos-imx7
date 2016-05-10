@@ -32,6 +32,7 @@
 #include "pin_mux.h"
 #include "ccm_analog_imx7d.h"
 #include "wm8960.h"
+#include "audio.h"
 
 void hardware_init(void)
 {
@@ -74,6 +75,8 @@ void hardware_init(void)
     configure_i2c_pins(BOARD_I2C_BASEADDR);
 
     wm8960_init();
+
+    audio_init();
 }
 
 /*******************************************************************************
