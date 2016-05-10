@@ -151,6 +151,10 @@ void wm8960_init(void)
         __NOP();
     }
 
+    wm8960_update_blocking(0x07, 0xc, 0x8); //24 bits
+    wm8960_update_blocking(0x07, 0x3, 0x2); //I2S Mode
+    wm8960_update_blocking(0x09, 0x40, 0x40); //ALRCGPIO=1 (Use DACLR for both)
+
     /* Enable left microphone path */
     wm8960_update_blocking(0x19, 0x20, 0x20); //AINL = 1
     wm8960_update_blocking(0x2F, 0x20, 0x20); //LMIC =1
