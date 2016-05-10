@@ -120,6 +120,7 @@ static inline void SAI_ClearIRQ(I2S_Type *base)
 {
     I2S_RCSR_REG(base) &= ~(I2S_RCSR_WSF_MASK);
     I2S_TCSR_REG(base) &= ~(I2S_TCSR_WSF_MASK | I2S_TCSR_SEF_MASK | I2S_TCSR_FEF_MASK);
+    I2S_TCSR_REG(base) |= I2S_TCSR_FR_MASK;
 }
 
 static inline uint32_t SAI_RxData(I2S_Type *base)
