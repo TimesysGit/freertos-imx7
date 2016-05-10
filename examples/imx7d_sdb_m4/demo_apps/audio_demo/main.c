@@ -35,30 +35,29 @@
 #include "task.h"
 #include "board.h"
 #include "debug_console_imx.h"
+#include "audio.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @brief A basic user-defined task
+ * @brief Task for updating UI values
  */
-void HelloTask(void *pvParameters)
+void UITask(void *pvParameters)
 {
-    uint8_t receiveBuff;
-
-    // Print the initial banner
-    PRINTF("\r\nHello World!\n\n\r");
+    PRINTF("\r\nTimesys AMP Audio Demo for i.MX7\n\n\r");
+    PRINTF("SAI Clk = %d Hz\n\r", get_sai_clock_freq(BOARD_I2S_BASEADDR));
 
     while(1)
     {
         // Main routine that simply echoes received characters forever
 
-        // First, get character
-        receiveBuff = GETCHAR();
-
-        // Now echo the received character
-        PUTCHAR(receiveBuff);
+#ifdef __DEBUG
+        /* Wait for a character */
+        GETCHAR();
+	audio_dump_reg();
+#endif
     }
 }
 
@@ -70,8 +69,8 @@ int main(void)
     // Initialize demo application pins setting and clock setting.
     hardware_init();
 
-    // Create a demo task which will print Hello world and echo user's input.
-    xTaskCreate(HelloTask, "Print Task", configMINIMAL_STACK_SIZE,
+    // Create a task which handles user interface updates
+    xTaskCreate(UITask, "UI Task", configMINIMAL_STACK_SIZE,
                 NULL, tskIDLE_PRIORITY+1, NULL);
 
     // Start FreeRTOS scheduler.
