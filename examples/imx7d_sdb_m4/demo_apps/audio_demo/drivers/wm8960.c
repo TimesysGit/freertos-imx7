@@ -176,12 +176,14 @@ void wm8960_init(void)
     wm8960_update_blocking(0x03, 0x7F, 0x79); //ROUT1VOL[6:0] = 0dB
     wm8960_update_blocking(0x1A, 0x20, 0x20); //ROUT1 = 1
 
-#define MIC_BYPASS_TO_MIXER
 #ifdef MIC_BYPASS_TO_MIXER
     /* Test code to bypass ADC/DAC and connect mic to output mixer */
     wm8960_update_blocking(0x2D, 0x80, 0x80); //LB2LO = 1
     wm8960_update_blocking(0x2D, 0x70, 0x00); //LB2LOVOL[2:0] = 0dB
 #else
+    /* Disable bypass */
+    wm8960_update_blocking(0x2D, 0x80, 0x00); //LB2LO = 0
+
     /* ADC setup */
     wm8960_update_blocking(0x19, 0xC, 0xC); //ADCL = 1, ADCR = 1
     wm8960_update_blocking(0x17, 0xC, 0x4); //DATSEL[1:0] left, right data = left ADC
