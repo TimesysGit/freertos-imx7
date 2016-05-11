@@ -189,6 +189,8 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../audio.c"
     "${ProjDirPath}/../audio.h"
     "${ProjDirPath}/../fixedptc.h"
+    "${ProjDirPath}/../ts_audio_msg.c"
+    "${ProjDirPath}/../ts_audio_msg.h"
 )
 SET_TARGET_PROPERTIES(audio_demo PROPERTIES OUTPUT_NAME "audio_demo.elf")
 
