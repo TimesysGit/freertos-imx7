@@ -136,9 +136,14 @@ void audio_init()
     SAI_Enable(BOARD_I2S_BASEADDR);
 }
 
-void audio_update_coeff(coeff_t index, int32_t val)
+int audio_update_coeff(coeff_t index, int32_t val)
 {
+    if (index >= COEFF_T_NUM || index < 0)
+        return -1;
+
     coeffs[index] = val;
+
+    return 0;
 }
 
 void BOARD_I2S_HANDLER(void)

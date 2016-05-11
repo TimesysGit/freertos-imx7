@@ -54,7 +54,7 @@ typedef enum coeff {
 ///////////////////////////////////////////////////////////////////////////////
 void audio_dump_reg();
 void audio_init();
-void audio_update_coeff(coeff_t index, int32_t val);
+int audio_update_coeff(coeff_t index, int32_t val);
 
 #endif /* __AUDIO_H__ */
 
