@@ -188,6 +188,7 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../drivers/wm8960.h"
     "${ProjDirPath}/../audio.c"
     "${ProjDirPath}/../audio.h"
+    "${ProjDirPath}/../fixedptc.h"
 )
 SET_TARGET_PROPERTIES(audio_demo PROPERTIES OUTPUT_NAME "audio_demo.elf")
 

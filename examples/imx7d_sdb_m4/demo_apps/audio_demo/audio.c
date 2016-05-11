@@ -55,6 +55,14 @@ static volatile uint32_t samp_out[2] = {0, 0};
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifdef __DEBUG
+static void print_qvalue(int32_t val)
+{
+        char buf[20];
+
+        fixedpt_str((fixedpt)val, buf, -2);
+        PRINTF("%s", buf);
+}
+
 void audio_dump_reg()
 {
         uint32_t printsamp[4];
