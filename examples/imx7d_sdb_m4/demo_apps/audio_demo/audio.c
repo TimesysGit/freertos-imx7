@@ -31,6 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
+#include <string.h>
 #include "FreeRTOS.h"
 #include "board.h"
 #include "debug_console_imx.h"
@@ -49,6 +50,10 @@ enum channel {
 
 static volatile int32_t samp_in[2] = {0, 0};
 static volatile int32_t samp_out[2] = {0, 0};
+
+#define DELAY_NUM 1
+
+static int32_t delay[DELAY_NUM];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -111,6 +116,8 @@ void audio_dump_reg() {};
 
 void audio_init()
 {
+    /* Clear the buffers */
+    memset(delay, 0, DELAY_NUM * sizeof(int32_t));
 
     SAI_Init(BOARD_I2S_BASEADDR, &saiInitConfig);
 
