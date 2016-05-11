@@ -40,6 +40,8 @@
 #include "mu_imx.h"
 #include "debug_console_imx.h"
 #include "audio.h"
+#include "ts_audio_msg.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +59,17 @@ static char app_buf[512]; /* Each RPMSG buffer can carry less than 512 payload *
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
+static int ParseMsg(ts_audio_msg_t *msg)
+{
+    return audio_update_coeff(msg->key, msg->value);
+}
+
+static void PrintMsg(ts_audio_msg_t *msg)
+{
+    PRINTF("Key     : 0x%04x\n", msg->key);
+    PRINTF("Value   : 0x%08x\n", msg->value);
+}
+
 /*!
  * @brief A basic RPMSG task
  */
@@ -70,6 +83,7 @@ static void AudioCtrlTask(void *pvParameters)
     unsigned long src;
     void *tx_buf;
     unsigned long size;
+    ts_audio_msg_t msg;
 
     /* Print the initial banner */
     PRINTF("\r\nTimesys AMP Audio Demo for i.MX7\n\n\r");
@@ -94,12 +108,19 @@ static void AudioCtrlTask(void *pvParameters)
         /* Copy string from RPMsg rx buffer */
         assert(len < sizeof(app_buf));
         memcpy(app_buf, rx_buf, len);
-        app_buf[len] = 0; /* End string by '\0' */
 
-        if ((len == 2) && (app_buf[0] == 0xd) && (app_buf[1] == 0xa))
-            PRINTF("Get New Line From Master Side\r\n");
-        else
-            PRINTF("Get Message From Master Side : \"%s\" [len : %d]\r\n", app_buf, len);
+        /* Receive message */
+        if(!StreamToMsg(app_buf, len, &msg)) {
+            PrintMsg(&msg);
+            if(ParseMsg(&msg)) {
+                PRINTF("Invalid key\n\r");
+                /* TODO: Generate failure response */
+            }
+            /* TODO: Generate success response */
+        } else {
+            PRINTF("Malformed message!\n\r");
+            /* TODO: Generate failure response */
+        }
 
         /* Get tx buffer from RPMsg */
         tx_buf = rpmsg_rtos_alloc_tx_buffer(app_chnl->rp_ept, &size);
