@@ -54,6 +54,9 @@ static volatile int32_t samp_out[2] = {0, 0};
 #define DELAY_NUM 1
 
 static int32_t delay[DELAY_NUM];
+static int32_t coeffs[COEFF_T_NUM] = {
+    fixedpt_rconst(1.0),
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -66,6 +69,9 @@ static void ProcessAudio()
 
     lsignal = samp_in[LEFT];
     rsignal = samp_in[RIGHT];
+
+    lsignal = fixedpt_xmul(lsignal, coeffs[C_GAIN]);
+    rsignal = fixedpt_xmul(rsignal, coeffs[C_GAIN]);
 
     samp_out[LEFT] = lsignal;
     samp_out[RIGHT] = rsignal;
@@ -128,6 +134,11 @@ void audio_init()
     NVIC_EnableIRQ(BOARD_I2S_IRQ_NUM);
 
     SAI_Enable(BOARD_I2S_BASEADDR);
+}
+
+void audio_update_coeff(coeff_t index, int32_t val)
+{
+    coeffs[index] = val;
 }
 
 void BOARD_I2S_HANDLER(void)
