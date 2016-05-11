@@ -47,12 +47,24 @@ enum channel {
     LEFT = 1,
 };
 
-static volatile uint32_t samp_in[2] = {0, 0};
-static volatile uint32_t samp_out[2] = {0, 0};
+static volatile int32_t samp_in[2] = {0, 0};
+static volatile int32_t samp_out[2] = {0, 0};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
+
+/* All audio processing should occur in this function */
+static void ProcessAudio()
+{
+    int32_t lsignal, rsignal;
+
+    lsignal = samp_in[LEFT];
+    rsignal = samp_in[RIGHT];
+
+    samp_out[LEFT] = lsignal;
+    samp_out[RIGHT] = rsignal;
+}
 
 #ifdef __DEBUG
 static void print_qvalue(int32_t val)
@@ -65,7 +77,7 @@ static void print_qvalue(int32_t val)
 
 void audio_dump_reg()
 {
-        uint32_t printsamp[4];
+        int32_t printsamp[4];
 
         printsamp[0] = samp_in[LEFT];
         printsamp[1] = samp_in[RIGHT];
@@ -111,25 +123,18 @@ void audio_init()
     SAI_Enable(BOARD_I2S_BASEADDR);
 }
 
-/* All audio processing should occur in this function */
-static void ProcessAudio()
-{
-    samp_out[LEFT] = samp_in[LEFT];
-    samp_out[RIGHT] = samp_in[RIGHT];
-}
-
 void BOARD_I2S_HANDLER(void)
 {
 
     SAI_ClearIRQ(BOARD_I2S_BASEADDR);
 
     /* Write samples */
-    SAI_TxData(BOARD_I2S_BASEADDR, samp_out[LEFT]);
-    SAI_TxData(BOARD_I2S_BASEADDR, samp_out[RIGHT]);
+    SAI_TxData(BOARD_I2S_BASEADDR, (uint32_t)samp_out[LEFT]);
+    SAI_TxData(BOARD_I2S_BASEADDR, (uint32_t)samp_out[RIGHT]);
 
     /* Read samples */
-    samp_in[LEFT] = SAI_RxData(BOARD_I2S_BASEADDR);
-    samp_in[RIGHT] = SAI_RxData(BOARD_I2S_BASEADDR);
+    samp_in[LEFT] = (int32_t)SAI_RxData(BOARD_I2S_BASEADDR);
+    samp_in[RIGHT] = (int32_t)SAI_RxData(BOARD_I2S_BASEADDR);
 
     ProcessAudio();
 }
