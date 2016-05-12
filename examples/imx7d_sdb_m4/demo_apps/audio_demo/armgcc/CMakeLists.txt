@@ -188,6 +188,7 @@ ADD_EXECUTABLE(audio_demo
     "${ProjDirPath}/../drivers/wm8960.h"
     "${ProjDirPath}/../audio.c"
     "${ProjDirPath}/../audio.h"
+    "${ProjDirPath}/../audio_ext.h"
     "${ProjDirPath}/../fixedptc.h"
     "${ProjDirPath}/../ts_audio_msg.c"
     "${ProjDirPath}/../ts_audio_msg.h"

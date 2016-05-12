@@ -28,23 +28,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#ifndef __AUDIO_EXT_H__
+#define __AUDIO_EXT_H__
 
+#define FIXEDPT_WBITS 4 /* Use a Q28 fixed point format */
+#include "fixedptc.h"
 
-///////////////////////////////////////////////////////////////////////////////
-//  Includes
-///////////////////////////////////////////////////////////////////////////////
-#include "audio_ext.h"
+typedef enum coeff {
+    C_GAIN,
+    COEFF_T_NUM, // Should always be last
+} coeff_t;
 
-///////////////////////////////////////////////////////////////////////////////
-//  Function prototypes
-///////////////////////////////////////////////////////////////////////////////
-void audio_dump_reg();
-void audio_init();
-int audio_update_coeff(coeff_t index, int32_t val);
-
-#endif /* __AUDIO_H__ */
+#endif /* __AUDIO_EXT_H__ */
 
 /*******************************************************************************
  * EOF
