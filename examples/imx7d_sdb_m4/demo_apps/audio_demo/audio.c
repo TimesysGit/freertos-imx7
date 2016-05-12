@@ -66,22 +66,21 @@ static int32_t coeffs[COEFF_T_NUM] = {
 /* All audio processing should occur in this function */
 static void ProcessAudio()
 {
-    int32_t lsignal, rsignal;
+    int32_t signal;
 
-    lsignal = samp_in[LEFT];
-    rsignal = samp_in[RIGHT];
+    signal = samp_in[LEFT];
+
 
     /* Output gain */
-    lsignal = fixedpt_xmul(lsignal, coeffs[C_GAIN]);
-    rsignal = fixedpt_xmul(rsignal, coeffs[C_GAIN]);
+    signal = fixedpt_xmul(signal, coeffs[C_GAIN]);
 
     /* Output mute */
     if (coeffs[C_MUTE]) {
         samp_out[LEFT] = 0;
         samp_out[RIGHT] = 0;
     } else {
-        samp_out[LEFT] = lsignal;
-        samp_out[RIGHT] = rsignal;
+        samp_out[LEFT] = signal;
+        samp_out[RIGHT] = signal;
     }
 }
 
