@@ -70,7 +70,12 @@ static const int32_t coeffs_default[COEFF_T_NUM][3] = {
     /* Default            MIN         MAX */
     {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_GAIN */
     {0,                   0,          1},                    /* C_MUTE */
+    {0,                   0,          CIRCBUF_MASK},         /* C_DELAY */
+    {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_DECAY */
+    {fixedpt_rconst(0),   0,          fixedpt_rconst(1.0)},  /* C_WET */
 };
+
+static uint32_t cb_in = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -94,10 +99,29 @@ static inline int32_t cb_get(int16_t *buffer, uint32_t index)
 /* All audio processing should occur in this function */
 static void ProcessAudio()
 {
-    int32_t signal;
+    int32_t signal, drysignal;
+    int32_t cb_out;
 
     signal = samp_in[LEFT];
 
+    drysignal = signal;
+
+    /* Get the delayed sample */
+    cb_out = cb_offset(cb_in, -coeffs[C_DELAY]);
+
+    /* Mix in the delayed sample */
+    signal = fixedpt_xmul(signal, coeffs[C_DECAY]);
+    signal += fixedpt_xmul(cb_get(circbuf, cb_out), fixedpt_rconst(1.0) - coeffs[C_DECAY]);
+
+    /* Put the new sample into the buffer */
+    cb_set(circbuf, cb_in, signal);
+
+    /* Increment the circular buffer for the next sample */
+    cb_in = cb_offset(cb_in, 1);
+
+    /* Mix the dry signal back in */
+    signal = fixedpt_xmul(signal, coeffs[C_WET]);
+    signal += fixedpt_xmul(drysignal, fixedpt_rconst(1.0) - coeffs[C_WET]);
 
     /* Output gain */
     signal = fixedpt_xmul(signal, coeffs[C_GAIN]);
