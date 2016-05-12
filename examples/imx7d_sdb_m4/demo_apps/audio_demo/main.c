@@ -66,8 +66,7 @@ static int ParseMsg(ts_audio_msg_t *msg)
 
 static void PrintMsg(ts_audio_msg_t *msg)
 {
-    PRINTF("Key     : 0x%04x\n", msg->key);
-    PRINTF("Value   : 0x%08x\n", msg->value);
+    PRINTF("Message : 0x%04x 0x%08x\n\r", msg->key, msg->value);
 }
 
 /*!
