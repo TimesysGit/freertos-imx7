@@ -54,14 +54,23 @@ static volatile int32_t samp_out[2] = {0, 0};
 #define DELAY_NUM 1
 
 static int32_t delay[DELAY_NUM];
-static int32_t coeffs[COEFF_T_NUM] = {
-    fixedpt_rconst(1.0), /* C_GAIN */
-    0,                   /* C_MUTE */
+static int32_t coeffs[COEFF_T_NUM];
+
+enum coeff_cols {
+    COEFF_DEFAULT,
+    COEFF_MIN,
+    COEFF_MAX,
 };
 
 #define CIRCBUF_SIZE (0x10000)
 #define CIRCBUF_MASK (CIRCBUF_SIZE - 1)
 int16_t __attribute__((section(".buffer"))) circbuf[CIRCBUF_SIZE];
+
+static const int32_t coeffs_default[COEFF_T_NUM][3] = {
+    /* Default            MIN         MAX */
+    {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_GAIN */
+    {0,                   0,          1},                    /* C_MUTE */
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -148,6 +157,12 @@ void audio_dump_reg() {};
 
 void audio_init()
 {
+    int i;
+
+    /* Initialize coefficients */
+    for (i = 0; i < COEFF_T_NUM; i++)
+        coeffs[i] = coeffs_default[i][COEFF_DEFAULT];
+
     /* Clear the buffers */
     memset(delay, 0, DELAY_NUM * sizeof(int32_t));
     memset(circbuf, 0, CIRCBUF_SIZE * sizeof(int16_t));
@@ -167,6 +182,10 @@ int audio_update_coeff(coeff_t index, int32_t val)
 {
     if (index >= COEFF_T_NUM || index < 0)
         return -1;
+
+    if ((val < coeffs_default[index][COEFF_MIN]) ||
+        (val > coeffs_default[index][COEFF_MAX]))
+            return -1;
 
     coeffs[index] = val;
 
