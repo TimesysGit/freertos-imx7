@@ -59,9 +59,28 @@ static int32_t coeffs[COEFF_T_NUM] = {
     0,                   /* C_MUTE */
 };
 
+#define CIRCBUF_SIZE (0x10000)
+#define CIRCBUF_MASK (CIRCBUF_SIZE - 1)
+int16_t __attribute__((section(".buffer"))) circbuf[CIRCBUF_SIZE];
+
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
+
+static inline uint32_t cb_offset(uint32_t index, uint32_t inc)
+{
+    return (index + inc) & CIRCBUF_MASK;
+}
+
+static inline void cb_set(int16_t *buffer, uint32_t index, int32_t value)
+{
+    buffer[index] = value >> 16;
+}
+
+static inline int32_t cb_get(int16_t *buffer, uint32_t index)
+{
+    return (int32_t)buffer[index] << 16;
+}
 
 /* All audio processing should occur in this function */
 static void ProcessAudio()
@@ -131,6 +150,7 @@ void audio_init()
 {
     /* Clear the buffers */
     memset(delay, 0, DELAY_NUM * sizeof(int32_t));
+    memset(circbuf, 0, CIRCBUF_SIZE * sizeof(int16_t));
 
     SAI_Init(BOARD_I2S_BASEADDR, &saiInitConfig);
 
