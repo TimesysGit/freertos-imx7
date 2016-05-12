@@ -55,7 +55,8 @@ static volatile int32_t samp_out[2] = {0, 0};
 
 static int32_t delay[DELAY_NUM];
 static int32_t coeffs[COEFF_T_NUM] = {
-    fixedpt_rconst(1.0),
+    fixedpt_rconst(1.0), /* C_GAIN */
+    0,                   /* C_MUTE */
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +71,18 @@ static void ProcessAudio()
     lsignal = samp_in[LEFT];
     rsignal = samp_in[RIGHT];
 
+    /* Output gain */
     lsignal = fixedpt_xmul(lsignal, coeffs[C_GAIN]);
     rsignal = fixedpt_xmul(rsignal, coeffs[C_GAIN]);
 
-    samp_out[LEFT] = lsignal;
-    samp_out[RIGHT] = rsignal;
+    /* Output mute */
+    if (coeffs[C_MUTE]) {
+        samp_out[LEFT] = 0;
+        samp_out[RIGHT] = 0;
+    } else {
+        samp_out[LEFT] = lsignal;
+        samp_out[RIGHT] = rsignal;
+    }
 }
 
 #ifdef __DEBUG

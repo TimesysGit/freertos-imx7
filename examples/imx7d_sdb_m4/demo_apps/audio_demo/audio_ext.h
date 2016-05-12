@@ -36,6 +36,7 @@
 
 typedef enum coeff {
     C_GAIN,
+    C_MUTE,
     COEFF_T_NUM, // Should always be last
 } coeff_t;
 
