@@ -34,10 +34,26 @@
 #include "wm8960.h"
 #include "audio.h"
 
+void RDC_memory_init(void)
+{
+    uint32_t start, end;
+
+    extern uint32_t __BufferBase__[];
+    extern uint32_t __BufferEnd__[];
+
+    start = (uint32_t)__BufferBase__ & 0xFFFFFF80;
+    end   = ((uint32_t)__BufferEnd__ + 0x7F) & 0xFFFFFF80;
+
+    RDC_SetMrAccess(RDC, rdcMrOcram, start, end, 3 << (BOARD_DOMAIN_ID * 2), true, false);
+}
+
 void hardware_init(void)
 {
     /* Board specific RDC settings */
     BOARD_RdcInit();
+
+    /* Bound part of the OCRAM Memory to M4 Core */
+    RDC_memory_init();
 
     /* Board specific clock settings */
     BOARD_ClockInit();
