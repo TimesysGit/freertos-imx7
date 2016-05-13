@@ -71,7 +71,7 @@ static const int32_t coeffs_default[COEFF_T_NUM][3] = {
     /* Default            MIN         MAX */
     {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_GAIN */
     {0,                   0,          1},                    /* C_MUTE */
-    {0,                   0,          CIRCBUF_MASK},         /* C_DELAY */
+    {1,                   1,          CIRCBUF_MASK},         /* C_DELAY */
     {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_DECAY */
     {fixedpt_rconst(0.00025), 0,          fixedpt_rconst(1.0)},  /* C_SMOOTH */
 };
