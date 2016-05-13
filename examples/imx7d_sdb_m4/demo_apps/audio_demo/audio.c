@@ -32,6 +32,7 @@
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
 #include <string.h>
+#include <stdlib.h>
 #include "FreeRTOS.h"
 #include "board.h"
 #include "debug_console_imx.h"
@@ -72,9 +73,11 @@ static const int32_t coeffs_default[COEFF_T_NUM][3] = {
     {0,                   0,          1},                    /* C_MUTE */
     {0,                   0,          CIRCBUF_MASK},         /* C_DELAY */
     {fixedpt_rconst(1.0), 0,          fixedpt_rconst(1.0)},  /* C_DECAY */
+    {fixedpt_rconst(0.00025), 0,          fixedpt_rconst(1.0)},  /* C_SMOOTH */
 };
 
 static uint32_t cb_in = 0;
+static uint32_t cb_off = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -103,8 +106,16 @@ static void ProcessAudio()
 
     signal = samp_in[LEFT];
 
+    /* Smooth out the delay offset value */
+    if (abs(cb_off - coeffs[C_DELAY]) < 10){
+        cb_off = coeffs[C_DELAY];
+    } else {
+        cb_off = fixedpt_xmul(cb_off, fixedpt_rconst(1.0) - coeffs[C_SMOOTH]);
+        cb_off += fixedpt_xmul(coeffs[C_DELAY], coeffs[C_SMOOTH]);
+    }
+
     /* Get the delayed sample */
-    cb_out = cb_offset(cb_in, -coeffs[C_DELAY]);
+    cb_out = cb_offset(cb_in, -cb_off);
 
     /* Mix in the delayed sample */
     signal += fixedpt_xmul(cb_get(circbuf, cb_out), fixedpt_rconst(1.0) - coeffs[C_DECAY]);
