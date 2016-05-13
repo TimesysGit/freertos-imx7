@@ -101,7 +101,7 @@ static inline int32_t cb_get(int16_t *buffer, uint32_t index)
 /* All audio processing should occur in this function */
 static void ProcessAudio()
 {
-    int32_t signal;
+    int32_t signal, drysignal = 0;
     int32_t cb_out;
 
     signal = samp_in[LEFT];
@@ -116,6 +116,11 @@ static void ProcessAudio()
 
     /* Get the delayed sample */
     cb_out = cb_offset(cb_in, -cb_off);
+
+    if (coeffs[C_DECAY] == 0) {
+        drysignal = signal;
+        signal = 0;
+    }
 
     /* Mix in the delayed sample */
     signal += fixedpt_xmul(cb_get(circbuf, cb_out), fixedpt_rconst(1.0) - coeffs[C_DECAY]);
@@ -134,8 +139,8 @@ static void ProcessAudio()
         samp_out[LEFT] = 0;
         samp_out[RIGHT] = 0;
     } else {
-        samp_out[LEFT] = signal;
-        samp_out[RIGHT] = signal;
+        samp_out[LEFT] = signal + drysignal;
+        samp_out[RIGHT] = signal + drysignal;
     }
 }
 
