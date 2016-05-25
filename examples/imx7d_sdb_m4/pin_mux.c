@@ -146,23 +146,23 @@ void configure_i2c_pins(I2C_Type* base)
             break;
         case I2C4_BASE:
             // I2C4 iomux configuration
-            IOMUXC_SW_MUX_CTL_PAD_I2C4_SCL = IOMUXC_SW_MUX_CTL_PAD_I2C4_SCL_MUX_MODE(0) |
-                                                 IOMUXC_SW_MUX_CTL_PAD_I2C4_SCL_SION_MASK;
-            IOMUXC_SW_MUX_CTL_PAD_I2C4_SDA = IOMUXC_SW_MUX_CTL_PAD_I2C4_SDA_MUX_MODE(0) |
-                                                 IOMUXC_SW_MUX_CTL_PAD_I2C4_SDA_SION_MASK;
+            IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_SYNC = IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_SYNC_MUX_MODE(3) |
+                                                 IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_SYNC_SION_MASK;
+            IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_BCLK = IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_BCLK_MUX_MODE(3) |
+                                                 IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_BCLK_SION_MASK;
 
-            IOMUXC_I2C4_SCL_SELECT_INPUT = IOMUXC_I2C4_SCL_SELECT_INPUT_DAISY(2);
-            IOMUXC_I2C4_SDA_SELECT_INPUT = IOMUXC_I2C4_SDA_SELECT_INPUT_DAISY(2);
+            IOMUXC_I2C4_SCL_SELECT_INPUT = IOMUXC_I2C4_SCL_SELECT_INPUT_DAISY(3);
+            IOMUXC_I2C4_SDA_SELECT_INPUT = IOMUXC_I2C4_SDA_SELECT_INPUT_DAISY(3);
 
-            IOMUXC_SW_PAD_CTL_PAD_I2C4_SCL = IOMUXC_SW_PAD_CTL_PAD_I2C4_SCL_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SCL_PS(3)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SCL_DSE(0)   |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SCL_HYS_MASK;
+            IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_SYNC = IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_SYNC_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_SYNC_PS(3)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_SYNC_DSE(0)   |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_SYNC_HYS_MASK;
 
-            IOMUXC_SW_PAD_CTL_PAD_I2C4_SDA = IOMUXC_SW_PAD_CTL_PAD_I2C4_SDA_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SDA_PS(3)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SDA_DSE(0)   |
-                                                 IOMUXC_SW_PAD_CTL_PAD_I2C4_SDA_HYS_MASK;
+            IOMUXC_SW_MUX_CTL_PAD_SAI1_RX_BCLK = IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_BCLK_PE_MASK  |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_BCLK_PS(3)    |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_BCLK_DSE(0)   |
+                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_RX_BCLK_HYS_MASK;
             break;
         default:
             break;
@@ -192,54 +192,6 @@ void configure_uart_pins(UART_Type* base)
     }
 }
 
-void configure_sai_pins(I2S_Type* base)
-{
-    switch((uint32_t)base)
-    {
-        case I2S1_BASE:
-            // UART2 iomux configuration
-            IOMUXC_SW_MUX_CTL_PAD_SAI1_MCLK =    IOMUXC_SW_MUX_CTL_PAD_SAI1_MCLK_MUX_MODE(0);
-            IOMUXC_SW_MUX_CTL_PAD_ENET1_TX_CLK = IOMUXC_SW_MUX_CTL_PAD_ENET1_TX_CLK_MUX_MODE(2);
-            IOMUXC_SW_MUX_CTL_PAD_ENET1_COL =    IOMUXC_SW_MUX_CTL_PAD_ENET1_COL_MUX_MODE(2);
-            IOMUXC_SW_MUX_CTL_PAD_ENET1_RX_CLK = IOMUXC_SW_MUX_CTL_PAD_ENET1_RX_CLK_MUX_MODE(2);
-            IOMUXC_SW_MUX_CTL_PAD_ENET1_CRS =    IOMUXC_SW_MUX_CTL_PAD_ENET1_CRS_MUX_MODE(2);
-
-            IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK =    IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_PS(0)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_HYS_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_SRE_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_SAI1_MCLK_DSE(3);
-
-            IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK = IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_PS(0)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_HYS_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_SRE_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_TX_CLK_DSE(3);
-
-            IOMUXC_SW_PAD_CTL_PAD_ENET1_COL =    IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_PE_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_PS(1)   |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_COL_DSE(0);
-
-            IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK = IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_PS(0)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_HYS_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_SRE_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_RX_CLK_DSE(3);
-
-            IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS =    IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_PE_MASK  |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_PS(0)    |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_HYS_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_SRE_MASK |
-                                                 IOMUXC_SW_PAD_CTL_PAD_ENET1_CRS_DSE(3);
-
-            IOMUXC_SAI1_RX_DATA_SELECT_INPUT = IOMUXC_SAI1_RX_DATA_SELECT_INPUT_DAISY_MASK;
-            IOMUXC_SAI1_TX_BCLK_SELECT_INPUT = IOMUXC_SAI1_TX_BCLK_SELECT_INPUT_DAISY_MASK;
-            IOMUXC_SAI1_TX_SYNC_SELECT_INPUT = IOMUXC_SAI1_TX_SYNC_SELECT_INPUT_DAISY_MASK;
-            break;
-        default:
-            break;
-    }
-}
 /*******************************************************************************
  * EOF
  ******************************************************************************/

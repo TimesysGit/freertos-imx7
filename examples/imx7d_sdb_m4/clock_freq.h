@@ -86,14 +86,6 @@ uint32_t get_i2c_clock_freq(I2C_Type* base);
  */
 uint32_t get_uart_clock_freq(UART_Type* base);
 
-/*!
- * @brief Get clock frequency applies to the SAI module
- *
- * @param base SAI base pointer.
- * @return clock frequency (in HZ) applies to the SAI module
- */
-uint32_t get_sai_clock_freq(I2S_Type* base);
-
 #if defined(__cplusplus)
 }
 #endif

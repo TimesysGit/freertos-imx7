@@ -57,11 +57,6 @@
 #define BOARD_WDOG_IRQ_NUM                    WDOG3_IRQn
 #define BOARD_WDOG_HANDLER                    WDOG3_Handler
 
-/* SAI information for this board */
-#define BOARD_SAI_RDC_PDAP                    rdcPdapSai1
-#define BOARD_SAI_CCM_ROOT                    ccmRootSai1
-#define BOARD_SAI_CCM_CCGR                    ccmCcgrGateSai1
-
 /* SEMA4 information for this board */
 #define BOARD_SEMA4_RDC_PDAP                  rdcPdapSemaphoreHs
 #define BOARD_SEMA4_CCM_CCGR                  ccmCcgrGateSemaHs
@@ -113,18 +108,14 @@
 #define BOARD_MU_RDC_PDAP                     rdcPdapMuB
 
 /* I2C information for this board */
-#define BOARD_I2C_RDC_PDAP                    rdcPdapI2c4
-#define BOARD_I2C_CCM_ROOT                    ccmRootI2c4
-#define BOARD_I2C_CCM_CCGR                    ccmCcgrGateI2c4
-#define BOARD_I2C_BASEADDR                    I2C4
-#define BOARD_I2C_IRQ_NUM                     I2C4_IRQn
-#define BOARD_I2C_HANDLER                     I2C4_Handler
-#define BOARD_I2C_WM8960_ADDR                 (0x1A)
-
-/* I2S information for this board */
-#define BOARD_I2S_BASEADDR                    I2S1
-#define BOARD_I2S_IRQ_NUM                     SAI1_IRQn
-#define BOARD_I2S_HANDLER                     SAI1_Handler
+#define BOARD_I2C_RDC_PDAP                    rdcPdapI2c2
+#define BOARD_I2C_CCM_ROOT                    ccmRootI2c2
+#define BOARD_I2C_CCM_CCGR                    ccmCcgrGateI2c2
+#define BOARD_I2C_BASEADDR                    I2C2
+#define BOARD_I2C_IRQ_NUM                     I2C2_IRQn
+#define BOARD_I2C_HANDLER                     I2C2_Handler
+#define BOARD_I2C_FXAS21002_ADDR              (0x20)
+#define BOARD_I2C_FXOS8700_ADDR               (0x1E)
 
 /* FlexCAN information for this board */
 #define BOARD_FLEXCAN_RDC_PDAP                rdcPdapFlexCan2

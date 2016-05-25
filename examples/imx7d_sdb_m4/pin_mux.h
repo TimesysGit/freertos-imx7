@@ -88,22 +88,6 @@ void configure_i2c_pins(I2C_Type* base);
 /* ===================================================================*/
 void configure_uart_pins(UART_Type* base);
 
-/*
-** ===================================================================
-**     Method      :  pin_mux_SAI (component PinSettings)
-*/
-/*!
-**     @brief
-**         SAI method sets registers according routing settings. Call
-**         this method code to route desired pins into:
-**         SAI1, SAI2, SAI3
-**         peripherals.
-**     @param
-**         I2S_Type* base - SAI base address 1..3
-*/
-/* ===================================================================*/
-void configure_sai_pins(I2S_Type* base);
-
 #endif /* __PIN_MUX_H__ */
 /*******************************************************************************
  * EOF
